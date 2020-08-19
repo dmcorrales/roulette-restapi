@@ -20,12 +20,22 @@ public class RouletteRepository {
         this.hashOperations = this.redisTemplate.opsForHash();
     }
 
-    public void save(Roulette entity) {
+    public String save(Roulette entity) {
         hashOperations.put(HEADER, entity.getId(), entity);
+        return entity.getId();
     }
 
     public List findAll(){
         return hashOperations.values(HEADER);
+    }
+
+    public Roulette findById(String key){
+        return (Roulette) hashOperations.get(HEADER, key);
+    }
+
+    public Roulette updateStatus(Roulette entity){
+        save(entity);
+        return entity;
     }
 
 }
