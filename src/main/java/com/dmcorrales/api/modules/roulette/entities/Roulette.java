@@ -2,11 +2,9 @@ package com.dmcorrales.api.modules.roulette.entities;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.redis.core.RedisHash;
-
 import java.io.Serializable;
-import java.io.UnsupportedEncodingException;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.UUID;
 
 @RedisHash("Roulette")
@@ -15,9 +13,9 @@ public class Roulette implements Serializable {
     private String id;
     private Integer number;
     private Boolean status;
+    private List<Score> score;
 
     public Roulette(){
-        id = UUID.randomUUID().toString().replace("-", "");
     }
 
     public String getId() {
@@ -42,6 +40,14 @@ public class Roulette implements Serializable {
 
     public void setStatus(Boolean status) {
         this.status = status;
+    }
+
+    public List<Score> getScore() {
+        return score;
+    }
+
+    public void setScore(List<Score> score) {
+        this.score = score;
     }
 }
 
