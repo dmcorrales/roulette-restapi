@@ -6,15 +6,31 @@ import java.io.Serializable;
 
 @RedisHash("scores")
 public class Score implements Serializable {
+
+    private static final long serialVersionUID = 7821110451301315929L;
+
     private String value;
     private Double cash;
-    @Reference
-    private Roulette rouletteId;
 
-
-    public Score(String value, Double cash, Roulette rouletteId) {
+    public Score(String value, Double cash) {
         this.value = value;
         this.cash = cash;
-        this.rouletteId = rouletteId;
     }
+
+    public String getValue() {
+        return value;
+    }
+
+    public void setValue(String value) {
+        this.value = value;
+    }
+
+    public Double getCash() {
+        return cash;
+    }
+
+    public void setCash(Double cash) {
+        this.cash = cash;
+    }
+
 }

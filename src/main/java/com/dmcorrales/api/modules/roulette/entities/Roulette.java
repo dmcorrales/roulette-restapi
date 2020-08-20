@@ -1,19 +1,24 @@
 package com.dmcorrales.api.modules.roulette.entities;
 
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.Reference;
 import org.springframework.data.redis.core.RedisHash;
+
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.UUID;
 
 @RedisHash("Roulette")
 public class Roulette implements Serializable {
+
+    private static final long serialVersionUID = -422583128045078934L;
+
     @Id
     private String id;
     private Integer number;
     private Boolean status;
-    private List<Score> score;
+    private List<Score> score = new ArrayList<>();
 
     public Roulette(){
     }

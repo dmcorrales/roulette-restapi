@@ -4,6 +4,7 @@ import com.dmcorrales.api.commons.api.controller.GenericController;
 import com.dmcorrales.api.commons.api.controller.RestResponse;
 import com.dmcorrales.api.commons.api.service.GenericService;
 import com.dmcorrales.api.modules.roulette.entities.Roulette;
+import com.dmcorrales.api.modules.roulette.enums.TypeEnum;
 import com.dmcorrales.api.modules.roulette.services.impl.RouletteServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -18,7 +19,7 @@ public class RouletteController extends GenericController<String, Roulette> {
     RouletteServiceImpl service;
 
     @Override
-    protected GenericService getService() {
+    protected GenericService<String, Roulette> getService() {
         return service;
     }
 
@@ -46,15 +47,25 @@ public class RouletteController extends GenericController<String, Roulette> {
         return buildResponse("Se ha realizado correctamente el cierre de la ruleta", HttpStatus.OK, entity);
     }
 
-    @GetMapping("bet/{id}/{value}")
+    @GetMapping({"bet/{id}/{type}/{value}"})
     @ResponseBody
-    ResponseEntity<RestResponse<Roulette>> bet(@PathVariable("id") String id, @PathVariable("value") String value){
-        Roulette entity = null;
+    ResponseEntity<RestResponse<Roulette>> bet(@PathVariable(value = "id", required = true) String id,
+                                               @PathVariable(value = "type", required = true) String type,
+                                               @PathVariable(value = "value", required = true) String value){
+        Roulette entity;
+        TypeEnum typeEnum = isValidType(type);
         try {
-            entity = service.bet(id,value);
+            if(type != null && typeEnum != null)
+                entity = service.bet(id,value,typeEnum);
+            else
+                throw new Exception("El tipo de valor ingresado no coindice con lo esperado {color, number}");
         } catch (Exception e) {
             return buildResponse(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
         return buildResponse("Se ha realizado correctamente el cierre de la ruleta", HttpStatus.OK, entity);
+    }
+
+    private TypeEnum isValidType(String type) {
+        return TypeEnum.valueOf(type.toUpperCase());
     }
 }
