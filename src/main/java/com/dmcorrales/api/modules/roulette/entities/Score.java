@@ -1,5 +1,4 @@
 package com.dmcorrales.api.modules.roulette.entities;
-import org.springframework.data.annotation.Reference;
 import org.springframework.data.redis.core.RedisHash;
 
 import java.io.Serializable;
@@ -10,10 +9,12 @@ public class Score implements Serializable {
     private static final long serialVersionUID = 7821110451301315929L;
 
     private String value;
+    private String resultValue;
     private Double cash;
 
-    public Score(String value, Double cash) {
+    public Score(String value, String resultValue, Double cash) {
         this.value = value;
+        this.resultValue = resultValue;
         this.cash = cash;
     }
 
@@ -33,4 +34,11 @@ public class Score implements Serializable {
         this.cash = cash;
     }
 
+    public String getResultValue() {
+        return resultValue;
+    }
+
+    public void setResultValue(String resultValue) {
+        this.resultValue = resultValue;
+    }
 }
