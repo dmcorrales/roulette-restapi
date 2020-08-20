@@ -5,13 +5,10 @@ import com.dmcorrales.api.commons.api.controller.RestResponse;
 import com.dmcorrales.api.commons.api.service.GenericService;
 import com.dmcorrales.api.modules.roulette.dto.BetDto;
 import com.dmcorrales.api.modules.roulette.entities.Roulette;
-import com.dmcorrales.api.modules.roulette.enums.TypeEnum;
 import com.dmcorrales.api.modules.roulette.services.impl.RouletteServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.util.StringUtils;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
@@ -57,13 +54,11 @@ public class RouletteController extends GenericController<String, Roulette> {
     @GetMapping({"/bet/{id}"})
     @ResponseBody
     ResponseEntity<RestResponse<Roulette>> bet(@PathVariable(value = "id", required = true) String id,
-                                               @RequestBody @Validated BetDto betDto,
+                                               @RequestBody BetDto betDto,
                                                HttpServletResponse response){
         Roulette entity;
-        TypeEnum typeEnum;
         try {
-            typeEnum = isValidType(betDto);
-            entity = service.bet(id,betDto.getNumber(), betDto.getColor(),typeEnum, betDto.getMoney());
+            entity = service.bet(id,betDto);
         } catch (Exception e) {
             response.setStatus(HttpStatus.BAD_REQUEST.value());
             return buildResponse(e.getMessage(), HttpStatus.BAD_REQUEST);
@@ -72,15 +67,4 @@ public class RouletteController extends GenericController<String, Roulette> {
         return buildResponse("Se ha realizado correctamente el cierre de la ruleta", HttpStatus.OK, entity);
     }
 
-    private TypeEnum isValidType(BetDto betDto) throws Exception {
-        if(StringUtils.isEmpty(String.valueOf(betDto.getNumber())) && StringUtils.isEmpty(betDto.getColor()))
-            throw new Exception("No se ha ingresado el TIPO esperado {color} o {number}");
-        else if(betDto.getNumber() > 0 && !StringUtils.isEmpty(betDto.getColor()))
-            throw new Exception("Se espera solo un TIPO {color} o {number}");
-        else if(!StringUtils.isEmpty(betDto.getColor()))
-            return TypeEnum.COLOR;
-        else if(betDto.getNumber() > 0)
-            return TypeEnum.NUMBER;
-        throw new Exception("No se ha ingresado un tipo de dato esperado.");
-    }
 }

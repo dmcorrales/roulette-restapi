@@ -1,12 +1,9 @@
 package com.dmcorrales.api.modules.roulette.entities;
 
 import org.springframework.data.annotation.Id;
-import org.springframework.data.annotation.Reference;
 import org.springframework.data.redis.core.RedisHash;
-
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 
 @RedisHash("Roulette")
@@ -16,9 +13,8 @@ public class Roulette implements Serializable {
 
     @Id
     private String id;
-    private Integer number;
     private Boolean status;
-    private List<Score> score = new ArrayList<>();
+    private List<Bet> bet = new ArrayList<>();
 
     public Roulette(){
     }
@@ -31,14 +27,6 @@ public class Roulette implements Serializable {
         this.id = id;
     }
 
-    public Integer getNumber() {
-        return number;
-    }
-
-    public void setNumber(Integer number) {
-        this.number = number;
-    }
-
     public Boolean getStatus() {
         return status;
     }
@@ -47,12 +35,12 @@ public class Roulette implements Serializable {
         this.status = status;
     }
 
-    public List<Score> getScore() {
-        return score;
+    public List<Bet> getBet() {
+        return bet;
     }
 
-    public void setScore(List<Score> score) {
-        this.score = score;
+    public void setBet(List<Bet> bet) {
+        this.bet = bet;
     }
 }
 

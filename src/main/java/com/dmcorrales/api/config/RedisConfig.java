@@ -1,34 +1,45 @@
 package com.dmcorrales.api.config;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.data.redis.connection.DefaultStringRedisConnection;
+import org.springframework.data.redis.connection.RedisConnectionFactory;
+import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
+import org.springframework.data.redis.connection.StringRedisConnection;
+import org.springframework.data.redis.connection.jedis.JedisClientConfiguration;
 import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
-import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.serializer.GenericToStringSerializer;
-import org.springframework.data.redis.serializer.StringRedisSerializer;
+import redis.clients.jedis.JedisPoolConfig;
 
 @Configuration
 @PropertySource("classpath:application.properties")
 public class RedisConfig {
 
+   @Value("${spring.redis.host}") String hostName;
+
+    @Value("${spring.redis.port}") Integer port;
+
+    @Value("${spring.redis.password}") String password;
 
     @Bean
-    JedisConnectionFactory getJedisConnectionFactory() {
-        JedisConnectionFactory jedisConnectionFactory = new JedisConnectionFactory();
-        jedisConnectionFactory.setHostName("144.91.104.30");
-        jedisConnectionFactory.setPort(6379);
-        return jedisConnectionFactory;
+    public RedisConnectionFactory redisConnectionFactory() {
+        RedisStandaloneConfiguration config = new RedisStandaloneConfiguration(hostName, port);
+        config.setPassword(password);
+        JedisPoolConfig poolConfig = new JedisPoolConfig();
+        poolConfig.setTestWhileIdle(true);
+        poolConfig.setMinEvictableIdleTimeMillis(60000);
+        poolConfig.setTimeBetweenEvictionRunsMillis(30000);
+        poolConfig.setNumTestsPerEvictionRun(-1);
+        poolConfig.setMaxTotal(16);
+
+        return new JedisConnectionFactory(config, JedisClientConfiguration.builder()
+                .usePooling().poolConfig(poolConfig).build());
     }
 
     @Bean
-    RedisTemplate<String,Object> getRedisTemplate() {
-        RedisTemplate<String,Object> redisTemplate = new RedisTemplate<>();
-        redisTemplate.setConnectionFactory(getJedisConnectionFactory());
-        redisTemplate.setHashKeySerializer(new StringRedisSerializer());
-        redisTemplate.setHashValueSerializer(new StringRedisSerializer());
-        redisTemplate.setKeySerializer(new StringRedisSerializer());
-        redisTemplate.setValueSerializer(new StringRedisSerializer());
-        return redisTemplate;
+    public StringRedisConnection stringRedisConnection() throws Exception {
+        return new DefaultStringRedisConnection(redisConnectionFactory().getConnection());
     }
+
 }

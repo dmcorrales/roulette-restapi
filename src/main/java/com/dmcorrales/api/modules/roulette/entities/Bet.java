@@ -4,7 +4,7 @@ import org.springframework.data.redis.core.RedisHash;
 import java.io.Serializable;
 
 @RedisHash("scores")
-public class Score implements Serializable {
+public class Bet implements Serializable {
 
     private static final long serialVersionUID = 7821110451301315929L;
 
@@ -12,7 +12,7 @@ public class Score implements Serializable {
     private String resultValue;
     private Double cash;
 
-    public Score(String value, String resultValue, Double cash) {
+    public Bet(String value, String resultValue, Double cash) {
         this.value = value;
         this.resultValue = resultValue;
         this.cash = cash;
