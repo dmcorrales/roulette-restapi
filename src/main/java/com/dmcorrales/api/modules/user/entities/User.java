@@ -1,4 +1,4 @@
-package com.dmcorrales.api.modules.roulette.entities;
+package com.dmcorrales.api.modules.user.entities;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.redis.core.RedisHash;
@@ -10,8 +10,8 @@ public class User implements Serializable {
 
     @Id
     private String id;
-    private String name;
-    private double balance;
+    private String name = "";
+    private double balance = 0.0;
 
     public User(String id, String name, double balance) {
         this.id = id;
