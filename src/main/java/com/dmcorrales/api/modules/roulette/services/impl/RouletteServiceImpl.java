@@ -13,6 +13,7 @@ import com.dmcorrales.api.modules.user.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
+
 import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
@@ -52,7 +53,7 @@ public class RouletteServiceImpl extends GenericService<String, Roulette> implem
             throw new Exception("No se ha encontrado el usuario");
         if(roulette == null)
             throw new Exception("No se ha encontrado la ruleta");
-        if(roulette.getStatus() == Boolean.FALSE)
+        if(roulette.getStatus().equals(Boolean.FALSE))
             throw new Exception("La ruleta está cerrada");
         if(user.getBalance() < dto.getMoney())
             throw new Exception("El usuario no posee fondo suficiente para apostar");
@@ -90,6 +91,7 @@ public class RouletteServiceImpl extends GenericService<String, Roulette> implem
             user.setBalance(user.getBalance() + money);
         else
             user.setBalance(user.getBalance() - money);
+        userRepository.save(user);
         return new Bet(value, resultValue, money, user);
     }
 
@@ -115,7 +117,7 @@ public class RouletteServiceImpl extends GenericService<String, Roulette> implem
             throw new Exception("La llave está vacía");
         if(roulette == null)
             throw new Exception("No existe la ruleta");
-        if(roulette.getStatus() == Boolean.TRUE)
+        if(roulette.getStatus().equals(Boolean.TRUE))
             throw  new Exception("La ruleta ya se encontraba activa");
         roulette.setStatus(Boolean.TRUE);
         repository.updateStatus(roulette);
@@ -128,6 +130,8 @@ public class RouletteServiceImpl extends GenericService<String, Roulette> implem
             throw new Exception("La llave está vacía");
         if(roulette == null)
             throw new Exception("No existe la ruleta");
+        if(roulette.getStatus().equals(Boolean.FALSE))
+            throw new Exception("La ruleta se encontraba cerrada");
         roulette.setStatus(Boolean.FALSE);
         repository.updateStatus(roulette);
         return roulette;
