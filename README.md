@@ -1,6 +1,6 @@
 # Roulette App!
 
-_Este proyecto se ha realizado con el propósito de hacer la prueba técnica para Masivian._
+_Prueba técnica masivian._
 
 ## Comenzando 🚀
 _Se han tomado en cuenta cada uno de los principos del **Clean Code**, a continuación encontrarás una guía
@@ -16,7 +16,7 @@ _BODY PARAMS (OPCIONAL)_
 {"status":true}
 ```
 
-_ RESULTADO _
+_RESULTADO_
 
 ```
 {
@@ -35,7 +35,7 @@ confirme que la operación fue exitosa o denegada
 
 _[GET] host:port/roulette/opening/ddfb4526dfeb47f4b08f6a1802e7643c_
 
-_ RESULTADO _
+_RESULTADO_
 
 ```
 {
@@ -74,7 +74,7 @@ _[BODY]_
 {"money":15, "color":"rojo"} {"money":15, "color":"negro"}
 ```
 
-_ RESULTADO _
+_RESULTADO_
 
 ```
 {
@@ -107,7 +107,7 @@ resultado de las apuestas hechas desde su apertura hasta el cierre.
 
 _[GET] host:port/roulette/closing/ddfb4526dfeb47f4b08f6a1802e7643c_
 
-_ RESULTADO _
+_RESULTADO_
 
 ```
 {
@@ -138,7 +138,7 @@ _ RESULTADO _
 
 _[GET] host:port/roulette/_
 
-_ RESULTADO _
+_RESULTADO_
 
 ```
 [
@@ -162,4 +162,4 @@ _ RESULTADO _
 ```
 
 ---
-⌨️ con ❤️ por [dmcorrales](https://github.com/dmcorrales) 😊
+⌨️ con ❤️ por [Daniel Corrales](https://github.com/dmcorrales) 😊
