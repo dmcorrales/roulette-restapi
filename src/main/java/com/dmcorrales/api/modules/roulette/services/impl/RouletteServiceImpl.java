@@ -2,7 +2,8 @@ package com.dmcorrales.api.modules.roulette.services.impl;
 
 import com.dmcorrales.api.commons.api.service.GenericService;
 import com.dmcorrales.api.commons.helpers.RandomValueGenerator;
-import com.dmcorrales.api.modules.roulette.dto.BetDto;
+import com.dmcorrales.api.modules.roulette.dto.BetInput;
+import com.dmcorrales.api.modules.roulette.dto.BetOutput;
 import com.dmcorrales.api.modules.roulette.entities.Bet;
 import com.dmcorrales.api.modules.roulette.entities.Roulette;
 import com.dmcorrales.api.modules.roulette.enums.ColorEnum;
@@ -44,7 +45,7 @@ public class RouletteServiceImpl extends GenericService<String, Roulette> implem
         return repository.findAll();
     }
 
-    public Roulette bet(String key, BetDto dto, String userId) throws Exception {
+    public Roulette bet(String key, BetInput dto, String userId) throws Exception {
         User user = userRepository.findById(userId);
         TypeEnum type = this.isValidType(dto);
         Roulette roulette = repository.findById(key);
@@ -67,14 +68,14 @@ public class RouletteServiceImpl extends GenericService<String, Roulette> implem
         return roulette;
     }
 
-    private TypeEnum isValidType(BetDto betDto) throws Exception {
-        if(StringUtils.isEmpty(String.valueOf(betDto.getNumber())) && StringUtils.isEmpty(betDto.getColor()))
+    private TypeEnum isValidType(BetInput betInput) throws Exception {
+        if(StringUtils.isEmpty(String.valueOf(betInput.getNumber())) && StringUtils.isEmpty(betInput.getColor()))
             throw new Exception("No se ha ingresado el TIPO esperado {color} o {number}");
-        else if(betDto.getNumber() > 0 && !StringUtils.isEmpty(betDto.getColor()))
+        else if(betInput.getNumber() > 0 && !StringUtils.isEmpty(betInput.getColor()))
             throw new Exception("Se espera solo un TIPO {color} o {number}");
-        else if(!StringUtils.isEmpty(betDto.getColor()))
+        else if(!StringUtils.isEmpty(betInput.getColor()))
             return TypeEnum.COLOR;
-        else if(betDto.getNumber() > 0)
+        else if(betInput.getNumber() > 0)
             return TypeEnum.NUMBER;
         throw new Exception("No se ha ingresado un tipo de dato esperado.");
     }
@@ -95,7 +96,7 @@ public class RouletteServiceImpl extends GenericService<String, Roulette> implem
 
     private void validateScoreArray(Roulette roulette, Bet bet) throws Exception {
         if(roulette.getBet().isEmpty() || roulette.getBet() == null){
-            LinkedList list = new LinkedList<>();
+            LinkedList<Bet> list = new LinkedList<>();
             list.add(bet);
             roulette.setBet(list);
         }else{
@@ -123,7 +124,7 @@ public class RouletteServiceImpl extends GenericService<String, Roulette> implem
         return roulette;
     }
 
-    public Map<String, List<Bet>> closing(String key) throws Exception {
+    public Map<String, BetOutput> closing(String key) throws Exception {
         Roulette roulette = repository.findById(key);
         if(key == null)
             throw new Exception("La llave está vacía");
@@ -137,16 +138,16 @@ public class RouletteServiceImpl extends GenericService<String, Roulette> implem
         return buildClose(roulette, resultNumber);
     }
 
-    public Map<String, List<Bet>> buildClose(Roulette roulette , Integer resultNumber){
+    public Map<String, BetOutput> buildClose(Roulette roulette , Integer resultNumber){
         List<Bet> winners = new ArrayList<>();
         List<Bet> losers = new ArrayList<>();
         ColorEnum colorEnum = ColorEnum.NEGRO;
         if((resultNumber % 2) == 0) colorEnum = ColorEnum.ROJO;
         for (Bet bet : roulette.getBet())
             buildListResults(resultNumber, winners, losers, colorEnum, bet);
-        Map<String, List<Bet>> result = new LinkedHashMap<>();
-        result.put("Winners", winners);
-        result.put("Losers", losers);
+        Map<String, BetOutput> result = new LinkedHashMap<>();
+        result.put("result", new BetOutput(resultNumber, colorEnum.getValue(),
+                winners.size(), losers.size(), winners,losers));
         return result;
     }
 

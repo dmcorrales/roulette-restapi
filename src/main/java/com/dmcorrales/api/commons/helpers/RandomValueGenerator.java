@@ -19,8 +19,7 @@ public class RandomValueGenerator {
     public static int generateRandomNumber(){
         int max = 36;
         int min = 0;
-        int result = (int) ((Math.random() * ((max - min) + 1)) + min);
-        return result;
+        return (int) ((Math.random() * ((max - min) + 1)) + min);
     }
 
 }

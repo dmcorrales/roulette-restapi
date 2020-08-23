@@ -6,25 +6,23 @@ import java.util.Map;
 
 public abstract class BuildGenericResponseController<HV> {
 
-    public ResponseEntity<RestResponse<Object>> buildGenericResponse(String value, HttpStatus status, Object obj ){
+    public ResponseEntity<RestResponse<Map>> buildListResponse(String value, HttpStatus status, Map obj, String errorMsg ){
         return new ResponseEntity<>(
-                new RestResponse<Object>(status.value(), true, null, value , obj),
-                HttpStatus.OK);
+                new RestResponse<Map>(status.value(), errorMsg, value , obj),
+                HttpStatus.valueOf(status.name()));
     }
 
-    public ResponseEntity<RestResponse<Map>> buildListResponse(String value, HttpStatus status, Map obj ){
+    public ResponseEntity<RestResponse<HV>> buildResponse(String value, HttpStatus status, HV obj , String errorMsg){
         return new ResponseEntity<>(
-                new RestResponse<Map>(status.value(), true, null, value , obj),
-                HttpStatus.OK);
-    }
-
-    public ResponseEntity<RestResponse<HV>> buildResponse(String value, HttpStatus status, HV obj ){
-        return new ResponseEntity<>(
-                new RestResponse<>(status.value(), true, null, value , obj),
-                HttpStatus.OK);
+                new RestResponse<>(status.value(), errorMsg, value , obj),
+                HttpStatus.valueOf(status.name()));
     }
 
     public ResponseEntity<RestResponse<HV>> buildResponse(String value, HttpStatus status){
-        return buildResponse(value, status, null);
+        return buildResponse(value, status, null, null);
+    }
+
+    public ResponseEntity<RestResponse<HV>> buildErrorResponse(String value, HttpStatus status){
+        return buildResponse(null, status, null, value);
     }
 }

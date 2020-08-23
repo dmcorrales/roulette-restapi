@@ -22,8 +22,8 @@ public abstract class GenericController<HK, HV>  extends BuildGenericResponseCon
         try {
             id = getService().save(input);
         } catch (Exception e) {
-            response.setStatus(HttpStatus.BAD_REQUEST.value());
-            return buildResponse("¡Vaya! no se ha podido insertar la entidad", HttpStatus.INTERNAL_SERVER_ERROR);
+            return buildErrorResponse("¡Vaya! no se ha podido insertar la entidad",
+                    HttpStatus.INTERNAL_SERVER_ERROR);
         }
     return buildResponse(id, HttpStatus.CREATED);
     }

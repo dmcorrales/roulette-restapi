@@ -3,9 +3,8 @@ package com.dmcorrales.api.modules.roulette.controllers;
 import com.dmcorrales.api.commons.api.controller.GenericController;
 import com.dmcorrales.api.commons.api.controller.RestResponse;
 import com.dmcorrales.api.commons.api.service.GenericService;
-import com.dmcorrales.api.modules.roulette.dto.BetDto;
+import com.dmcorrales.api.modules.roulette.dto.BetInput;
 import com.dmcorrales.api.modules.roulette.dto.BetOutput;
-import com.dmcorrales.api.modules.roulette.entities.Bet;
 import com.dmcorrales.api.modules.roulette.entities.Roulette;
 import com.dmcorrales.api.modules.roulette.services.impl.RouletteServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +13,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
-import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -36,39 +34,37 @@ public class RouletteController extends GenericController<String, Roulette> {
         try {
              entity = service.opening(id);
         } catch (Exception e) {
-            response.setStatus(HttpStatus.BAD_REQUEST.value());
-            return buildResponse(e.getMessage(), HttpStatus.BAD_REQUEST);
+            return buildErrorResponse(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
-        return buildResponse("Se ha realizado correctamente la apertura de la ruleta", HttpStatus.OK, entity);
+        return buildResponse("Se ha realizado correctamente la apertura de la ruleta", HttpStatus.OK, entity,
+                null);
     }
 
     @GetMapping("closing/{id}")
     @ResponseBody
     ResponseEntity<RestResponse<Map>> closing(@PathVariable("id") String id, HttpServletResponse response){
-        Map<String, List<Bet>> entity = null;
+        Map<String, BetOutput> entity = null;
         try {
             entity = service.closing(id);
         } catch (Exception e) {
-            return buildListResponse(e.getMessage(), HttpStatus.BAD_REQUEST, null);
+            return buildListResponse(null, HttpStatus.BAD_REQUEST, null, e.getMessage());
         }
-        return buildListResponse("Se ha realizado la apuesta", HttpStatus.OK, entity);
+        return buildListResponse("Se ha realizado la apuesta", HttpStatus.OK, entity, null);
     }
 
     @GetMapping({"/bet/{id}"})
     @ResponseBody
     ResponseEntity<RestResponse<Roulette>> bet(@PathVariable(value = "id", required = true) String id,
-                                               @RequestBody BetDto betDto,
+                                               @RequestBody BetInput betInput,
                                                @RequestHeader(value = "user-id", required = true) String userId,
                                                HttpServletResponse response){
         Roulette entity;
         try {
-            entity = service.bet(id,betDto, userId);
+            entity = service.bet(id, betInput, userId);
         } catch (Exception e) {
-            response.setStatus(HttpStatus.BAD_REQUEST.value());
-            return buildResponse(e.getMessage(), HttpStatus.BAD_REQUEST);
+            return buildErrorResponse(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
-        response.setStatus(HttpStatus.CREATED.value());
-        return buildResponse("Se ha realizado la apuesta", HttpStatus.OK, entity);
+        return buildResponse("Se ha realizado la apuesta", HttpStatus.OK, entity, null);
     }
 
 }

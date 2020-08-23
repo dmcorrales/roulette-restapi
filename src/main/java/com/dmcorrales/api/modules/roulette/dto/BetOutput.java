@@ -1,37 +1,43 @@
 package com.dmcorrales.api.modules.roulette.dto;
+
+import com.dmcorrales.api.modules.roulette.entities.Bet;
+
 import java.io.Serializable;
-import java.util.Map;
+import java.util.List;
 
 public class BetOutput implements Serializable {
 
-    private int status;
-    private String message;
+    private int result_number;
+    private String result_color;
     private int totalWinners;
     private int totalLosers;
-    private Map list;
+    private List<Bet> listWinners;
+    private List<Bet>listLosers;
 
-    public BetOutput(int status, String message, int totalWinners, int totalLosers, Map list) {
-        this.message = message;
+
+    public BetOutput(int result_number, String result_color, int totalWinners, int totalLosers, List<Bet> listWinners, List<Bet> listLosers) {
+        this.result_number = result_number;
+        this.result_color = result_color;
         this.totalWinners = totalWinners;
         this.totalLosers = totalLosers;
-        this.list = list;
+        this.listWinners = listWinners;
+        this.listLosers = listLosers;
     }
 
-
-    public int getStatus() {
-        return status;
+    public int getResult_number() {
+        return result_number;
     }
 
-    public void setStatus(int status) {
-        this.status = status;
+    public void setResult_number(int result_number) {
+        this.result_number = result_number;
     }
 
-    public String getMessage() {
-        return message;
+    public String getResult_color() {
+        return result_color;
     }
 
-    public void setMessage(String message) {
-        this.message = message;
+    public void setResult_color(String result_color) {
+        this.result_color = result_color;
     }
 
     public int getTotalWinners() {
@@ -50,12 +56,20 @@ public class BetOutput implements Serializable {
         this.totalLosers = totalLosers;
     }
 
-    public Map getList() {
-        return list;
+    public List<Bet> getListWinners() {
+        return listWinners;
     }
 
-    public void setList(Map list) {
-        this.list = list;
+    public void setListWinners(List<Bet> listWinners) {
+        this.listWinners = listWinners;
+    }
+
+    public List<Bet> getListLosers() {
+        return listLosers;
+    }
+
+    public void setListLosers(List<Bet> listLosers) {
+        this.listLosers = listLosers;
     }
 }
 

@@ -1,6 +1,6 @@
 package com.dmcorrales.api.modules.roulette.dto;
 
-public class BetDto {
+public class BetInput {
     private Integer number = 0;
     private String color = "";
     private double money = 0;
