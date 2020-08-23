@@ -5,6 +5,7 @@ import com.dmcorrales.api.commons.helpers.RandomValueGenerator;
 import com.dmcorrales.api.modules.roulette.dto.BetDto;
 import com.dmcorrales.api.modules.roulette.entities.Bet;
 import com.dmcorrales.api.modules.roulette.entities.Roulette;
+import com.dmcorrales.api.modules.roulette.enums.ColorEnum;
 import com.dmcorrales.api.modules.roulette.enums.TypeEnum;
 import com.dmcorrales.api.modules.roulette.repository.RouletteRepository;
 import com.dmcorrales.api.modules.roulette.services.RouletteService;
@@ -14,9 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
-import java.util.LinkedList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 public class RouletteServiceImpl extends GenericService<String, Roulette> implements RouletteService {
@@ -81,18 +80,10 @@ public class RouletteServiceImpl extends GenericService<String, Roulette> implem
     }
 
     private Bet buildRouletteBet(Integer number, String color, Double money, TypeEnum typeEnum, User user){
-        String resultValue = typeEnum.equals(TypeEnum.NUMBER) ?
-                String.valueOf(RandomValueGenerator.generateRandomNumber()) :
-                RandomValueGenerator.generateRandomColor().getValue();
         String value = typeEnum.equals(TypeEnum.NUMBER) ?
                 String.valueOf(number) :
                 color;
-        if(value.equalsIgnoreCase(resultValue))
-            user.setBalance(user.getBalance() + money);
-        else
-            user.setBalance(user.getBalance() - money);
-        userRepository.save(user);
-        return new Bet(value, resultValue, money, user);
+        return new Bet(value, money, user);
     }
 
     private boolean validateValueByType(Integer number, String color, TypeEnum typeEnum){
@@ -102,13 +93,19 @@ public class RouletteServiceImpl extends GenericService<String, Roulette> implem
         return color.equals(ROJO) || color.equals(NEGRO);
     }
 
-    private void validateScoreArray(Roulette roulette, Bet bet) {
+    private void validateScoreArray(Roulette roulette, Bet bet) throws Exception {
         if(roulette.getBet().isEmpty() || roulette.getBet() == null){
             LinkedList list = new LinkedList<>();
             list.add(bet);
             roulette.setBet(list);
-        }else
-            roulette.getBet().add(bet);
+        }else{
+            boolean isPresent = roulette.getBet().stream().anyMatch((b) ->
+                    b.getUser().getId().equals(bet.getUser().getId()));
+            if(isPresent)
+                throw  new Exception("Vaya! Solo puedes apostar una vez");
+            else
+                roulette.getBet().add(bet);
+        }
     }
 
     public Roulette opening(String key) throws Exception {
@@ -119,12 +116,14 @@ public class RouletteServiceImpl extends GenericService<String, Roulette> implem
             throw new Exception("No existe la ruleta");
         if(roulette.getStatus().equals(Boolean.TRUE))
             throw  new Exception("La ruleta ya se encontraba activa");
+        if(!roulette.getBet().isEmpty())
+            roulette.getBet().clear();
         roulette.setStatus(Boolean.TRUE);
         repository.updateStatus(roulette);
         return roulette;
     }
 
-    public Roulette closing(String key) throws Exception {
+    public Map<String, List<Bet>> closing(String key) throws Exception {
         Roulette roulette = repository.findById(key);
         if(key == null)
             throw new Exception("La llave está vacía");
@@ -133,7 +132,33 @@ public class RouletteServiceImpl extends GenericService<String, Roulette> implem
         if(roulette.getStatus().equals(Boolean.FALSE))
             throw new Exception("La ruleta se encontraba cerrada");
         roulette.setStatus(Boolean.FALSE);
+        Integer resultNumber = RandomValueGenerator.generateRandomNumber();
         repository.updateStatus(roulette);
-        return roulette;
+        return buildClose(roulette, resultNumber);
+    }
+
+    public Map<String, List<Bet>> buildClose(Roulette roulette , Integer resultNumber){
+        List<Bet> winners = new ArrayList<>();
+        List<Bet> losers = new ArrayList<>();
+        ColorEnum colorEnum = ColorEnum.NEGRO;
+        if((resultNumber % 2) == 0) colorEnum = ColorEnum.ROJO;
+        for (Bet bet : roulette.getBet())
+            buildListResults(resultNumber, winners, losers, colorEnum, bet);
+        Map<String, List<Bet>> result = new LinkedHashMap<>();
+        result.put("Winners", winners);
+        result.put("Losers", losers);
+        return result;
+    }
+
+    private void buildListResults(Integer resultNumber, List<Bet> winners, List<Bet> losers,
+                                 ColorEnum colorEnum, Bet bet) {
+        if(bet.getValue().equals(colorEnum.getValue()) || bet.getValue().equals(String.valueOf(resultNumber))){
+            bet.getUser().setBalance(bet.getUser().getBalance() + bet.getCash());
+            winners.add(bet);
+        }else{
+            bet.getUser().setBalance(bet.getUser().getBalance() - bet.getCash());
+            losers.add(bet);
+        }
+        userRepository.save(bet.getUser());
     }
 }

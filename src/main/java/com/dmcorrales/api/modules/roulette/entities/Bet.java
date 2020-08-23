@@ -10,14 +10,11 @@ public class Bet implements Serializable {
     private static final long serialVersionUID = 7821110451301315929L;
 
     private String value;
-    private String resultValue;
     private Double cash;
     private User user;
 
-    public Bet(String value, String resultValue, Double cash, User user) {
-        this.value = value;
-        this.resultValue = resultValue;
-        this.cash = cash;
+    public Bet(String value, Double cash, User user) {
+        this.value = value;this.cash = cash;
         this.user = user;
     }
 
@@ -36,15 +33,6 @@ public class Bet implements Serializable {
     public void setCash(Double cash) {
         this.cash = cash;
     }
-
-    public String getResultValue() {
-        return resultValue;
-    }
-
-    public void setResultValue(String resultValue) {
-        this.resultValue = resultValue;
-    }
-
     public User getUser() {
         return user;
     }
