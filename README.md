@@ -161,5 +161,44 @@ _RESULTADO_
 ]
 ```
 
+### Endpoint para visualizar usuarios
+
+
+_[GET] host:port/user/_
+
+_RESULTADO_
+
+```
+[
+    {
+        "id": "c611c90227684ff68bf638e8aab32fec",
+        "name": "Daniel Corrales",
+        "balance": 15.0
+    }
+]
+```
+
+### Endpoint para crear usuarios
+
+
+_[POST] host:port/user/_
+
+_[BODY]_
+```
+{"name":"Daniel Corrales", "balance": 15}
+```
+
+_RESULTADO_
+
+```
+[
+    {
+        "id": "c611c90227684ff68bf638e8aab32fec",
+        "name": "Daniel Corrales",
+        "balance": 15.0
+    }
+]
+```
+
 ---
 ⌨️ con ❤️ por [Daniel Corrales](https://github.com/dmcorrales) 😊
